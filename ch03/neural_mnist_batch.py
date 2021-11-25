@@ -45,14 +45,15 @@ def predict(network, x) :
 #     pil_img.show()
 
 def main() :
+    batch_size = 100
     x, t = get_data()
     accuracy_cnt = 0
     network = init_network()
-    for i in range(len(x)) :
-        y = predict(network, x[i])
-        p = np.argmax(y) #最も確率(softmax関数の出力)が高いインデックスを取得する．
-        if p == t[i]:
-            accuracy_cnt += 1
+    for i in range(0, len(x), batch_size) :
+        x_batch = x[i:i+batch_size]
+        y_batch = predict(network, x_batch)
+        p = np.argmax(y_batch, axis = 1) #最も確率(softmax関数の出力)が高いインデックスを取得する．最大値は行方向に探索する
+        accuracy_cnt += np.sum(p == t[i:i+batch_size])
 
     print("Accuracy:" + str(float(accuracy_cnt) / len(x)))
 
